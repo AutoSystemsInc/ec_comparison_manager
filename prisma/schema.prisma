@@ -14,3 +14,21 @@ model users {
   name          String?
   username          String?
 }
+
+// ENUM型の定義
+enum status {
+  active
+  inactive
+  archived
+}
+
+// productsテーブルの定義
+model products {
+  id           Int      @id @default(autoincrement()) // SERIAL PRIMARY KEY
+  imageUrl     String   @map("image_url")             // TEXT NOT NULL
+  name         String                                      // TEXT NOT NULL
+  status       status                                      // ENUM型
+  price        Decimal  @db.Decimal(10, 2)            // NUMERIC(10, 2) NOT NULL
+  stock        Int                                        // INTEGER NOT NULL
+  availableAt  DateTime @map("available_at")          // TIMESTAMP NOT NULL
+}
