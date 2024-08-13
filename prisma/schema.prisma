@@ -9,26 +9,51 @@ generator client {
 }
 
 model users {
-  id            String     @id @default(cuid())
-  email         String    @unique
-  name          String?
-  username          String?
+  id       String  @id @default(cuid())
+  email    String  @unique
+  name     String?
+  username String?
 }
 
-// ENUM型の定義
 enum status {
   active
   inactive
   archived
 }
 
-// productsテーブルの定義
-model products {
-  id           Int      @id @default(autoincrement()) // SERIAL PRIMARY KEY
-  imageUrl     String   @map("image_url")             // TEXT NOT NULL
-  name         String                                      // TEXT NOT NULL
-  status       status                                      // ENUM型
-  price        Decimal  @db.Decimal(10, 2)            // NUMERIC(10, 2) NOT NULL
-  stock        Int                                        // INTEGER NOT NULL
-  availableAt  DateTime @map("available_at")          // TIMESTAMP NOT NULL
+enum priceCurrency {
+  JPY
+  USD
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  url           String // TEXT NOT NULL
+  name          String // TEXT NOT NULL
+  image         String   @map("image_url") // TEXT NOT NULL
+  description   String // TEXT NOT NULL
+  price         Decimal  @db.Decimal(10, 2) // NUMERIC(10, 2) NOT NULL
+  priceCurrency String // TEXT NOT NULL
+  availability  String // TEXT NOT NULL
+  stock         Int? // INTEGER NOT NULL
+  status        status? // ENUM型
+  tags          Tag[]
+  shops         Shop[]
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Tag {
+  id          String    @id @default(cuid())
+  parentTagId String?
+  name        String // TEXT NOT NULL
+  products    Product[]
+  parentTag   Tag?      @relation("ParentAndChildren", fields: [parentTagId], references: [id])
+  tag         Tag[]     @relation("ParentAndChildren")
+}
+
+model Shop {
+  id       String    @id @default(cuid())
+  name     String // TEXT NOT NULL
+  products Product[]
 }
