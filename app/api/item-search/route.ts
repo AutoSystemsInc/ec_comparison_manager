@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 
 export async function GET() {
-
   try{
     const item_list = await prisma.product.findMany({
       where: { 
@@ -11,14 +10,15 @@ export async function GET() {
       },
     });
     console.log({item_list})
-    return new NextResponse(JSON.stringify(item_list), {
-      status: 201,
-    })
+    return NextResponse.json(
+      item_list, 
+      {status: 201}
+    )
   }
   catch {
-    return new NextResponse(
-      JSON.stringify({ errors: "item search error" }),
-      { status: 400 }
-    );
-}
+    return NextResponse.json(
+      { error: "item search error" },
+      { status: 400}
+    )
+  }
 }
