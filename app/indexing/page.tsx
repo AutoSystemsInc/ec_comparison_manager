@@ -33,7 +33,7 @@ export default function Indexing() {
     <div className="min-h-screen flex justify-center items-start md:items-center p-8">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Update API</CardTitle>
+          <CardTitle className="text-2xl">Indexing API</CardTitle>
           <CardDescription>
             アップデートコントローラ
           </CardDescription>

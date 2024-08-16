@@ -16,20 +16,21 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Product } from './product';
-import { SelectProduct } from '@/lib/db';
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { PrismaClient, Product as PrismaProduct  } from '@prisma/client';
 
 export function ProductsTable({
   products,
   offset,
   totalProducts
 }: {
-  products: SelectProduct[];
+  products: PrismaProduct[];
   offset: number;
   totalProducts: number;
 }) {
+  console.log({products})
   let router = useRouter();
   let productsPerPage = 5;
 
@@ -57,7 +58,7 @@ export function ProductsTable({
                 <span className="sr-only">Image</span>
               </TableHead>
               <TableHead>Name</TableHead>
-              <TableHead>Status</TableHead>
+              {/*<TableHead>Status</TableHead>*/}
               <TableHead className="hidden md:table-cell">Price</TableHead>
               <TableHead className="hidden md:table-cell">
                 Total Sales

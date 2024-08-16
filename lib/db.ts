@@ -1,4 +1,5 @@
 import 'server-only';
+import { PrismaClient, Product } from '@prisma/client';
 
 import { neon } from '@neondatabase/serverless';
 import { drizzle } from 'drizzle-orm/neon-http';
@@ -14,41 +15,49 @@ import {
 import { count, eq, ilike } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 
+const prisma = new PrismaClient();
+/*
 export const db = drizzle(neon(process.env.POSTGRES_URL!));
 
 export const statusEnum = pgEnum('status', ['active', 'inactive', 'archived']);
 
-export const products = pgTable('products', {
+export const product = pgTable('product', {
   id: serial('id').primaryKey(),
-  imageUrl: text('image_url').notNull(),
+  url: text('url').notNull(),
   name: text('name').notNull(),
-  status: statusEnum('status').notNull(),
+  //status: statusEnum('status').notNull(),
   price: numeric('price', { precision: 10, scale: 2 }).notNull(),
-  stock: integer('stock').notNull(),
+  //stock: integer('stock').notNull(),
   availableAt: timestamp('available_at').notNull()
 });
 
-export type SelectProduct = typeof products.$inferSelect;
-export const insertProductSchema = createInsertSchema(products);
+export type SelectProduct = typeof product.$inferSelect;
+export const insertProductSchema = createInsertSchema(product);
+*/
 
 export async function getProducts(
   search: string,
   offset: number
 ): Promise<{
-  products: SelectProduct[];
+  products: Product[];
   newOffset: number | null;
   totalProducts: number;
 }> {
   // Always search the full table, not per page
   if (search) {
+    const products = await prisma.product.findMany({
+      where: {
+        name: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      },
+      take: 1000,
+    })
     return {
-      products: await db
-        .select()
-        .from(products)
-        .where(ilike(products.name, `%${search}%`))
-        .limit(1000),
+      products: products,
       newOffset: null,
-      totalProducts: 0
+      totalProducts: products.length,
     };
   }
 
@@ -56,17 +65,22 @@ export async function getProducts(
     return { products: [], newOffset: null, totalProducts: 0 };
   }
 
-  let totalProducts = await db.select({ count: count() }).from(products);
-  let moreProducts = await db.select().from(products).limit(5).offset(offset);
+  let totalProducts = await prisma.product.count();
+  let moreProducts = await await prisma.product.findMany({
+    skip: offset,
+    take: 5,
+  })
   let newOffset = moreProducts.length >= 5 ? offset + 5 : null;
 
   return {
     products: moreProducts,
     newOffset,
-    totalProducts: totalProducts[0].count
+    totalProducts,
   };
 }
 
-export async function deleteProductById(id: number) {
-  await db.delete(products).where(eq(products.id, id));
+export async function deleteProductById(id: string) {
+  await prisma.product.delete({
+    where: { id },
+  })
 }

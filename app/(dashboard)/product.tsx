@@ -10,10 +10,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { SelectProduct } from '@/lib/db';
 import { deleteProduct } from './actions';
+import { Product as PrismaProduct } from '@prisma/client';
 
-export function Product({ product }: { product: SelectProduct }) {
+export function Product({ product }: { product: PrismaProduct }) {
+  console.log(product)
   return (
     <TableRow>
       <TableCell className="hidden sm:table-cell">
@@ -21,20 +22,20 @@ export function Product({ product }: { product: SelectProduct }) {
           alt="Product image"
           className="aspect-square rounded-md object-cover"
           height="64"
-          src={product.imageUrl}
+          src={product.url}
           width="64"
         />
       </TableCell>
       <TableCell className="font-medium">{product.name}</TableCell>
-      <TableCell>
+      {/*<TableCell>
         <Badge variant="outline" className="capitalize">
           {product.status}
         </Badge>
-      </TableCell>
+      </TableCell>*/}
       <TableCell className="hidden md:table-cell">{`$${product.price}`}</TableCell>
-      <TableCell className="hidden md:table-cell">{product.stock}</TableCell>
+      {/*<TableCell className="hidden md:table-cell">{product.stock}</TableCell>*/}
       <TableCell className="hidden md:table-cell">
-        {product.availableAt.toLocaleDateString()}
+        {product.updatedAt.toLocaleDateString()}
       </TableCell>
       <TableCell>
         <DropdownMenu>
