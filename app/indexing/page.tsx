@@ -7,14 +7,16 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-const indexingAPI=async()=>{
-  const res = await fetch('/api/update', {
+import { useState } from 'react';
+
+const indexingAPI=async(keyword: string)=>{
+  const res = await fetch('/api/indexing', {
     method:'POST',
     headers: {
       'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        keyword:'コスメ'
+        keyword:keyword
       }),
   })
   if (res.ok) {
@@ -26,6 +28,7 @@ const indexingAPI=async()=>{
 }
 
 export default function Indexing() {
+  const [keyword, setKeyword] = useState('');
   return (
     <div className="min-h-screen flex justify-center items-start md:items-center p-8">
       <Card className="w-full max-w-sm">
@@ -36,7 +39,17 @@ export default function Indexing() {
           </CardDescription>
         </CardHeader>
         <CardFooter>
-          <Button onClick={indexingAPI} className="w-full">楽天・Amazon API</Button>
+          <div className="w-full mb-4 p-2 border">
+        <input
+            type="text"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+            placeholder="Enter keyword"
+          />
+          </div>
+          <div className="w-full">
+          <Button onClick={()=> indexingAPI(keyword)} className="w-full">楽天・Amazon API</Button>
+          </div>
         </CardFooter>
       </Card>
     </div>

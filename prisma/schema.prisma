@@ -46,7 +46,7 @@ model Product {
 model Tag {
   id          String    @id @default(cuid())
   parentTagId String?
-  name        String // TEXT NOT NULL
+  name        String    @unique
   products    Product[]
   parentTag   Tag?      @relation("ParentAndChildren", fields: [parentTagId], references: [id])
   tag         Tag[]     @relation("ParentAndChildren")
