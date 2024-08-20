@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { getProducts } from "@/lib/contentful";
 
 const getData=async(keyword:string)=> {
   //console.log({keyword})
@@ -29,8 +30,12 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     const { keyword } = await req.json()
-    const data=await getData(keyword)
-    //console.log({data})
+    const data=keyword==="[PRODUKUT]"?(
+      await await getProducts(true)
+    ):(
+      await getData(keyword)
+    )
+    console.log({data})
     /*
     const products=data.map((item:any)=>({
       url:item.url,
@@ -62,29 +67,57 @@ export async function POST(req: NextRequest) {
       }
       )
       */
-    for(const item of data){
-      await prisma.product.create({
-        data:{
-          url:item.url,
-          name:item.title,
-          image:item.image,
-          description:item.title,
-          price: parseFloat(item.price),
-          priceCurrency:'JPY',
-          availability:'https://schema.org/InStock',
-          tags:{
-            connectOrCreate:[{
-              create:{
-                name:keyword, // keywordがtagテーブルに存在しないときだけ作成
-              },
-              where:{
-                name:keyword, // keywordがtagテーブルに存在する場合は接続
-              }
-            }]
+    if(keyword==="[PRODUKUT]"){
+      for(const item of data){
+        await prisma.product.create({
+          data:{
+            url:item.url,
+            name:item.name,
+            image:Array.isArray(item.image) ? item.image[0] : item.image,
+            description:item.description,
+            price: parseFloat(item.price),
+            priceCurrency:'JPY',
+            availability:'https://schema.org/InStock',
+            tags:{
+              connectOrCreate:[{
+                create:{
+                  name:keyword, // keywordがtagテーブルに存在しないときだけ作成
+                },
+                where:{
+                  name:keyword, // keywordがtagテーブルに存在する場合は接続
+                }
+              }]
+            }
           }
-        }
-        //shops:[{name:item.shop}],
-      })
+          //shops:[{name:item.shop}],
+        })
+      }
+    }else{
+      for(const item of data){
+        await prisma.product.create({
+          data:{
+            url:item.url,
+            name:item.title?item.title:item.name,
+            image:Array.isArray(item.image) ? item.image[0] : item.image,
+            description:item.title,
+            price: parseFloat(item.price),
+            priceCurrency:'JPY',
+            availability:'https://schema.org/InStock',
+            tags:{
+              connectOrCreate:[{
+                create:{
+                  name:keyword, // keywordがtagテーブルに存在しないときだけ作成
+                },
+                where:{
+                  name:keyword, // keywordがtagテーブルに存在する場合は接続
+                }
+              }]
+            }
+          }
+          //shops:[{name:item.shop}],
+        })
+      }
+
     }
     
     } catch {

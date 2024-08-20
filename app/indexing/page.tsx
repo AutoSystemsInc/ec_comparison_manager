@@ -48,7 +48,12 @@ export default function Indexing() {
           />
           </div>
           <div className="w-full">
-          <Button onClick={()=> indexingAPI(keyword)} className="w-full">楽天・Amazon API</Button>
+            <Button onClick={()=> indexingAPI(keyword)} className="w-full">楽天・Amazon API</Button>
+          </div>
+        </CardFooter>
+        <CardFooter>
+          <div className="w-full">
+            <Button onClick={()=> indexingAPI("[PRODUKUT]")} className="w-full">Contentful</Button>
           </div>
         </CardFooter>
       </Card>

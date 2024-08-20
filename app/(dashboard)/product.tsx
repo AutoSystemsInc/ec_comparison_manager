@@ -22,7 +22,7 @@ export function Product({ product }: { product: PrismaProduct }) {
           alt="Product image"
           className="aspect-square rounded-md object-cover"
           height="64"
-          src={product.url}
+          src={product.image}
           width="64"
         />
       </TableCell>

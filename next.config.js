@@ -17,6 +17,14 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'www.amazon.co.jp'
+      },
+      {
+        protocol: 'https',
+        hostname: 'thumbnail.image.rakuten.co.jp'
+      },
+      {
+        protocol: 'https',
+        hostname: 'm.media-amazon.com'
       }
     ]
   },
